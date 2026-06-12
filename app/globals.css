@@ -1,0 +1,144 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --bg-primary:     #FFFFFF;
+  --bg-secondary:   #F7F7F7;
+  --bg-tertiary:    #F0F0F0;
+  --text-primary:   #4B4B4B;
+  --text-secondary: #777777;
+  --border:         #E5E5E5;
+  --shadow:         #E5E5E5;
+  --card-bg:        #FFFFFF;
+
+  --duo-green:       #58CC02;
+  --duo-green-dark:  #43C000;
+  --duo-green-light: #89E219;
+  --duo-blue:        #1CB0F6;
+  --duo-red:         #FF4B4B;
+  --duo-orange:      #FF9600;
+}
+
+.dark {
+  --bg-primary:     #111111;
+  --bg-secondary:   #1A1A1A;
+  --bg-tertiary:    #222222;
+  --text-primary:   #F5F5F5;
+  --text-secondary: #A0A0A0;
+  --border:         #2E2E2E;
+  --shadow:         #000000;
+  --card-bg:        #1A1A1A;
+}
+
+@theme inline {
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-nunito);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-inter), system-ui, sans-serif;
+  transition: background-color 0.2s, color 0.2s;
+  min-height: 100vh;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.duo-card {
+  border-radius: 16px;
+  border: 2px solid var(--border);
+  box-shadow: 0 4px 0 var(--shadow);
+  background: var(--card-bg);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.duo-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 0 var(--shadow);
+}
+
+.duo-button {
+  background: var(--duo-green);
+  border-radius: 12px;
+  border: none;
+  border-bottom: 4px solid var(--duo-green-dark);
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.1s, border-bottom-width 0.1s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 28px;
+  font-size: 16px;
+  font-family: var(--font-nunito), sans-serif;
+  text-decoration: none;
+}
+
+.duo-button:active {
+  transform: translateY(2px);
+  border-bottom-width: 2px;
+}
+
+.duo-button:focus-visible {
+  outline: 3px solid var(--duo-blue);
+  outline-offset: 2px;
+}
+
+.duo-button-outline {
+  background: transparent;
+  border-radius: 12px;
+  border: 2px solid var(--border);
+  border-bottom: 4px solid var(--border);
+  color: var(--text-primary);
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.1s, border-bottom-width 0.1s, border-color 0.15s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 26px;
+  font-size: 16px;
+  font-family: var(--font-nunito), sans-serif;
+  text-decoration: none;
+}
+
+.duo-button-outline:active {
+  transform: translateY(2px);
+  border-bottom-width: 2px;
+}
+
+.duo-button-outline:hover {
+  border-color: var(--duo-green);
+  color: var(--duo-green);
+}
+
+.duo-button-outline:focus-visible {
+  outline: 3px solid var(--duo-blue);
+  outline-offset: 2px;
+}
+
+.font-display {
+  font-family: var(--font-nunito), sans-serif;
+}
+
+:focus-visible {
+  outline: 3px solid var(--duo-green);
+  outline-offset: 2px;
+}
