@@ -3,8 +3,8 @@ import ConceptDetailPage from '@/components/ConceptDetailPage'
 import { getConceptBySlug } from '@/lib/concepts'
 
 export const metadata: Metadata = {
-  title: 'Team Contest — duoproject',
-  description: 'Rood tegen Blauw. Leren als teamsport. Concept 3 van het duoproject.',
+  title: 'Team Contest — Duolingo project',
+  description: 'Rood tegen Blauw. Leren als teamsport. Concept 3 van het Duolingo project.',
 }
 
 export default function TeamContestPage() {

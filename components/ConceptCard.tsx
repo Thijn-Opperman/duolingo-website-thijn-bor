@@ -18,35 +18,39 @@ export default function ConceptCard({ concept, index }: ConceptCardProps) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 28 }}
+      initial={{ opacity: 0, y: 36 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.45, delay: index * 0.1, ease: [0.25, 0.1, 0.25, 1] }}
+      transition={{ duration: 0.55, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }}
     >
       <Link
         href={`/concept/${concept.slug}`}
-        className="block relative overflow-hidden rounded-2xl p-6 h-full"
+        className="block relative overflow-hidden rounded-2xl p-7 h-full"
         style={{
           background: 'var(--card-bg)',
           border: '2px solid var(--border)',
-          boxShadow: hovered ? `0 8px 0 var(--shadow)` : `0 4px 0 var(--shadow)`,
-          transform: hovered ? 'translateY(-4px)' : 'translateY(0)',
-          transition: 'transform 0.15s, box-shadow 0.15s',
-          minHeight: 220,
+          borderTop: `4px solid ${concept.color}`,
+          boxShadow: hovered
+            ? `0 16px 0 var(--shadow), 0 0 40px ${concept.color}18`
+            : `0 4px 0 var(--shadow)`,
+          transform: hovered ? 'translateY(-8px) scale(1.01)' : 'translateY(0) scale(1)',
+          transition: 'transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease',
+          minHeight: 230,
         }}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
       >
-        {/* Decorative number */}
+        {/* Decoratief concept-nummer */}
         <span
-          className="absolute top-3 right-4 select-none"
+          className="absolute top-2 right-4 select-none pointer-events-none"
           style={{
-            fontSize: 72,
+            fontSize: 88,
             fontFamily: 'var(--font-nunito)',
             fontWeight: 900,
             color: concept.color,
-            opacity: 0.07,
+            opacity: hovered ? 0.12 : 0.06,
             lineHeight: 1,
+            transition: 'opacity 0.25s ease',
           }}
         >
           {String(concept.id).padStart(2, '0')}
@@ -54,9 +58,9 @@ export default function ConceptCard({ concept, index }: ConceptCardProps) {
 
         {/* Tag */}
         <span
-          className="inline-block text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-4"
+          className="inline-block text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-5"
           style={{
-            background: concept.tagBg,
+            background: `${concept.color}18`,
             color: concept.color,
             letterSpacing: '0.08em',
             fontFamily: 'var(--font-inter)',
@@ -65,10 +69,16 @@ export default function ConceptCard({ concept, index }: ConceptCardProps) {
           {concept.tag[lang]}
         </span>
 
-        {/* Title */}
+        {/* Titel */}
         <h3
-          className="text-lg mb-2"
-          style={{ fontFamily: 'var(--font-nunito)', fontWeight: 800, color: 'var(--text-primary)' }}
+          className="mb-3"
+          style={{
+            fontFamily: 'var(--font-nunito)',
+            fontWeight: 800,
+            fontSize: 20,
+            color: 'var(--text-primary)',
+            lineHeight: 1.3,
+          }}
         >
           {concept.title[lang]}
         </h3>
@@ -81,18 +91,18 @@ export default function ConceptCard({ concept, index }: ConceptCardProps) {
           {concept.oneliner[lang]}
         </p>
 
-        {/* Arrow */}
+        {/* Pijl */}
         <AnimatePresence>
           {hovered && (
             <motion.div
-              initial={{ opacity: 0, x: -8 }}
+              initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -8 }}
-              transition={{ duration: 0.15 }}
+              exit={{ opacity: 0, x: -10 }}
+              transition={{ duration: 0.18 }}
               className="absolute bottom-5 right-5"
               style={{ color: concept.color }}
             >
-              <ArrowRight size={20} />
+              <ArrowRight size={22} />
             </motion.div>
           )}
         </AnimatePresence>

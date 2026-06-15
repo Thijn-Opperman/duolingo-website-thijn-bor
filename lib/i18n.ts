@@ -7,7 +7,9 @@ export const translations = {
     hero: {
       hook: 'Wist jij dat Duolingo gratis onderwijs geeft aan 125 miljoen mensen per maand?',
       hookSub: 'De meeste mensen kennen alleen de uil. Wij lieten de missie spreken.',
-      headline: 'leren, maar dan vetjes.',
+      headlinePre: 'van stil',
+      headlineMid: 'naar',
+      headlineAccent: 'luid.',
       subline: "Vier concepten die Duolingo's missie van stil naar luid brengen.",
       cta: 'Bekijk de concepten',
     },
@@ -68,7 +70,9 @@ export const translations = {
     hero: {
       hook: 'Did you know Duolingo gives free education to 125 million people every month?',
       hookSub: 'Most people only know the owl. We made the mission speak.',
-      headline: 'learning, but make it loud.',
+      headlinePre: 'from quiet',
+      headlineMid: 'to',
+      headlineAccent: 'loud.',
       subline: "Four concepts that turn Duolingo's mission from quiet to loud.",
       cta: 'See the concepts',
     },

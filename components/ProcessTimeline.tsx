@@ -30,7 +30,7 @@ export default function ProcessTimeline({ steps, accentColor }: ProcessTimelineP
               key={step.number}
               initial={{ opacity: 0, x: isEven ? -24 : 24 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: '-80px' }}
+              viewport={{ once: true, margin: '-40px 0px' }}
               transition={{ duration: 0.5, delay: i * 0.08, ease: [0.25, 0.1, 0.25, 1] }}
               className="relative flex flex-col md:flex-row gap-6 md:gap-10"
             >

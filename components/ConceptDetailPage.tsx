@@ -18,17 +18,14 @@ interface ConceptDetailPageProps {
 
 export default function ConceptDetailPage({ concept }: ConceptDetailPageProps) {
   const { lang, t } = useLanguage()
-  const { addXP, markConceptVisited, visitedConcepts } = useXP()
+  const { tryAddXP } = useXP()
   const protoRef = useRef<HTMLElement>(null)
   const processRef = useRef<HTMLElement>(null)
   const { prev, next } = getAdjacentConcepts(concept.id)
 
-  /* Award XP once per concept per session */
+  /* Award 25 XP the first time this concept is visited */
   useEffect(() => {
-    if (!visitedConcepts.includes(concept.id)) {
-      markConceptVisited(concept.id)
-      addXP(100, `Concept ${concept.id} bekeken`)
-    }
+    tryAddXP(`concept-${concept.id}`, 25, `Concept ${concept.id} bekeken`)
   }, [concept.id]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const scrollTo = (ref: React.RefObject<HTMLElement | null>) => {

@@ -1,72 +1,123 @@
 'use client'
 
 import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react'
+import { initAudio, playXPBlip, playLevelUp } from './audio'
 
-interface XPNotification {
+export interface XPNotification {
   id: number
   amount: number
   reason: string
+  isLevelUp: boolean
+  newLevel?: number
 }
 
 interface XPState {
   xp: number
+  level: number
   visitedConcepts: number[]
   notifications: XPNotification[]
+  /** Always awards XP — use for non-deduplicated events. */
   addXP: (amount: number, reason: string) => void
-  markConceptVisited: (id: number) => void
+  /** Awards XP only the first time for a given eventId (persisted in localStorage). */
+  tryAddXP: (eventId: string, amount: number, reason: string) => void
   dismissNotification: (id: number) => void
 }
 
 const XPContext = createContext<XPState | null>(null)
 
-let notifId = 0
+let _notifId = 0
+
+function levelOf(xp: number) {
+  return Math.floor(xp / 100)
+}
+
+function visitedFromClaimed(claimed: string[]): number[] {
+  return claimed
+    .filter((e) => /^concept-\d+$/.test(e))
+    .map((e) => parseInt(e.split('-')[1], 10))
+}
 
 export function XPProvider({ children }: { children: React.ReactNode }) {
   const [xp, setXP] = useState(0)
-  const [visitedConcepts, setVisitedConcepts] = useState<number[]>([])
+  const [claimedEvents, setClaimedEvents] = useState<string[]>([])
   const [notifications, setNotifications] = useState<XPNotification[]>([])
   const initialized = useRef(false)
 
   useEffect(() => {
     if (initialized.current) return
     initialized.current = true
+
     const savedXP = localStorage.getItem('duoproject-xp')
-    const savedVisited = localStorage.getItem('duoproject-visited')
+    const savedClaimed = localStorage.getItem('duoproject-claimed')
+
     if (savedXP) setXP(parseInt(savedXP, 10))
-    if (savedVisited) setVisitedConcepts(JSON.parse(savedVisited))
+    if (savedClaimed) {
+      try { setClaimedEvents(JSON.parse(savedClaimed)) } catch { /* ignore */ }
+    }
+
+    initAudio()
   }, [])
 
-  const addXP = useCallback((amount: number, reason: string) => {
-    setXP((prev) => {
-      const next = prev + amount
-      localStorage.setItem('duoproject-xp', String(next))
-      return next
-    })
-    const id = ++notifId
-    setNotifications((prev) => [...prev, { id, amount, reason }])
-    setTimeout(() => {
-      setNotifications((prev) => prev.filter((n) => n.id !== id))
-    }, 3000)
-  }, [])
+  const pushNotification = useCallback(
+    (amount: number, reason: string, isLevelUp: boolean, newLevel?: number) => {
+      const id = ++_notifId
+      setNotifications((prev) => [...prev, { id, amount, reason, isLevelUp, newLevel }])
+      setTimeout(() => {
+        setNotifications((prev) => prev.filter((n) => n.id !== id))
+      }, isLevelUp ? 3500 : 2500)
+    },
+    []
+  )
 
-  const markConceptVisited = useCallback(
-    (id: number) => {
-      setVisitedConcepts((prev) => {
-        if (prev.includes(id)) return prev
-        const next = [...prev, id]
-        localStorage.setItem('duoproject-visited', JSON.stringify(next))
+  const awardXP = useCallback(
+    (amount: number, reason: string) => {
+      setXP((prev) => {
+        const next = prev + amount
+        localStorage.setItem('duoproject-xp', String(next))
+
+        const didLevelUp = levelOf(next) > levelOf(prev)
+        if (didLevelUp) {
+          playLevelUp()
+          pushNotification(amount, reason, true, levelOf(next))
+        } else {
+          playXPBlip()
+          pushNotification(amount, reason, false)
+        }
         return next
       })
     },
-    []
+    [pushNotification]
+  )
+
+  const addXP = useCallback(
+    (amount: number, reason: string) => { awardXP(amount, reason) },
+    [awardXP]
+  )
+
+  const tryAddXP = useCallback(
+    (eventId: string, amount: number, reason: string) => {
+      setClaimedEvents((prev) => {
+        if (prev.includes(eventId)) return prev
+        const next = [...prev, eventId]
+        localStorage.setItem('duoproject-claimed', JSON.stringify(next))
+        awardXP(amount, reason)
+        return next
+      })
+    },
+    [awardXP]
   )
 
   const dismissNotification = useCallback((id: number) => {
     setNotifications((prev) => prev.filter((n) => n.id !== id))
   }, [])
 
+  const visitedConcepts = visitedFromClaimed(claimedEvents)
+  const level = levelOf(xp)
+
   return (
-    <XPContext.Provider value={{ xp, visitedConcepts, notifications, addXP, markConceptVisited, dismissNotification }}>
+    <XPContext.Provider
+      value={{ xp, level, visitedConcepts, notifications, addXP, tryAddXP, dismissNotification }}
+    >
       {children}
     </XPContext.Provider>
   )

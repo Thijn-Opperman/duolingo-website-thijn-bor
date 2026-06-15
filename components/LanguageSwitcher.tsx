@@ -1,16 +1,24 @@
 'use client'
 
 import { useLanguage } from '@/lib/LanguageContext'
+import { useXP } from '@/lib/XPContext'
 import { type Language } from '@/lib/i18n'
 
 export default function LanguageSwitcher() {
   const { lang, setLang } = useLanguage()
+  const { tryAddXP } = useXP()
+
+  const handleSwitch = (l: Language) => {
+    if (l === lang) return
+    setLang(l)
+    tryAddXP('lang-switch', 15, 'Taal gewisseld')
+  }
 
   const btn = (l: Language, label: string) => (
     <button
       key={l}
-      onClick={() => setLang(l)}
-      aria-label={`Switch to ${label}`}
+      onClick={() => handleSwitch(l)}
+      aria-label={`Schakel naar ${label}`}
       className="px-2 py-1 rounded-lg text-xs font-bold transition-all"
       style={
         lang === l
